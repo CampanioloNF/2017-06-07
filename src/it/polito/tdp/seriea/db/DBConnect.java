@@ -3,38 +3,38 @@ package it.polito.tdp.seriea.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
-import com.mchange.v2.c3p0.DataSources;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class DBConnect {
-	
-	private static String jdbcURL = "jdbc:mysql://localhost/serie_a?user=root&password=root" ;
-	
-	private static DataSource ds ;
+
+	private static final String jdbcURL = "jdbc:mysql://localhost/serie_a?serverTimezone=Europe/Rome";
+	private static HikariDataSource ds;
 	
 	public static Connection getConnection() {
 		
-		if(ds==null) {
-			// initialize DataSource
-			try {
-				ds = DataSources.pooledDataSource(DataSources.unpooledDataSource(jdbcURL)) ;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1);
-			}
+		if (ds == null) {
+			HikariConfig config = new HikariConfig();
+			config.setJdbcUrl(jdbcURL);
+			config.setUsername("root");
+			config.setPassword("");
+			
+			// configurazione MySQL
+			config.addDataSourceProperty("cachePrepStmts", "true");
+			config.addDataSourceProperty("prepStmtCacheSize", "250");
+			config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+			
+			ds = new HikariDataSource(config);
 		}
 		
 		try {
-			Connection c = ds.getConnection() ;
-			return c ;
+			
+			return ds.getConnection();
+
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null ;
+			System.err.println("Errore connessione al DB");
+			throw new RuntimeException(e);
 		}
-		
 	}
 
 }
