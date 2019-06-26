@@ -106,15 +106,14 @@ public class Model {
 	private void cerca(List<Team> parziale, Set<Arco> visitati) {
 
 		while(!parziale.isEmpty()) {
-			
-			Team squadra = parziale.get(parziale.size()-1);
-			
+	
 			while(visitaInProfondita(visitati, parziale));
 			
 			if(parziale.size()>camminoBest.size()) 
 				camminoBest = new ArrayList<>(parziale);
-			
-			parziale.remove(squadra);
+		 
+			if(parziale.size()>0)
+		    	parziale.remove(parziale.get(parziale.size()-1));
 		}
 		
 	}
@@ -129,7 +128,7 @@ public class Model {
 				
 		         parziale.add(succ);
 		         visitati.add(new Arco(squadra, succ));
-		         cerca(parziale, visitati);
+		         visitaInProfondita(visitati, parziale);
 			}
 			
 		}
